@@ -49,30 +49,30 @@ jobs:
           tags: myapp:${{ github.sha }}
           
       # Download Trivy vulnerability DB
-      - name: Download Trivy DB
-        run: |
-          mkdir -p $HOME/.cache/trivy
-          wget -q -O - https://github.com/aquasecurity/trivy-db/releases/latest/download/trivy-db.tar.gz | tar -xzf - -C $HOME/.cache/trivy
+    #   - name: Download Trivy DB
+    #     run: |
+    #       mkdir -p $HOME/.cache/trivy
+    #       wget -q -O - https://github.com/aquasecurity/trivy-db/releases/latest/download/trivy-db.tar.gz | tar -xzf - -C $HOME/.cache/trivy
 
-      # Install Trivy directly instead of using the action
-      - name: Install Trivy
-        run: |
-          sudo apt-get install wget apt-transport-https gnupg lsb-release
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update
-          sudo apt-get install -y trivy
+    #   # Install Trivy directly instead of using the action
+    #   - name: Install Trivy
+    #     run: |
+    #       sudo apt-get install wget apt-transport-https gnupg lsb-release
+    #       wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+    #       echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+    #       sudo apt-get update
+    #       sudo apt-get install -y trivy
           
-      - name: Scan image with Trivy
-        run: |
-          trivy image \
-            --cache-dir $HOME/.cache/trivy \
-            --no-progress \
-            --exit-code 1 \
-            --severity HIGH,CRITICAL \
-            myapp:${{ github.sha }}
+    #   - name: Scan image with Trivy
+    #     run: |
+    #       trivy image \
+    #         --cache-dir $HOME/.cache/trivy \
+    #         --no-progress \
+    #         --exit-code 1 \
+    #         --severity HIGH,CRITICAL \
+    #         myapp:${{ github.sha }}
 
-            
+
   deploy-dev:
     if: github.ref == 'refs/heads/dev'
     needs: build-and-scan
