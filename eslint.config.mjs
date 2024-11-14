@@ -13,11 +13,10 @@ export default [
         ...globals.node, // Include Node.js globals like __dirname and __filename
       },
     },
-
-  rules: {
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^next$" }],
+    rules: {
+      "no-unused-vars": ["error", { "argsIgnorePattern": "^next$" }],
+    },
   },
-},
   // Set up for recommended rules
   pluginJs.configs.recommended,
 ];
