@@ -30,12 +30,16 @@ jobs:
   build-and-scan:
     needs: lint
     runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: read
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
+        
       - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
@@ -43,14 +47,27 @@ jobs:
           push: false
           load: true
           tags: myapp:${{ github.sha }}
-
+          
+      # Cache Trivy vulnerability database
+      - name: Cache Trivy vulnerability database
+        uses: actions/cache@v3
+        with:
+          path: .trivy-cache
+          key: trivy-cache-${{ runner.os }}-${{ hashFiles('**/Dockerfile') }}
+          restore-keys: |
+            trivy-cache-${{ runner.os }}-
+            
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           image-ref: myapp:${{ github.sha }}
-          format: "table"
-          exit-code: "1"
-          severity: "CRITICAL,HIGH"
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+          cache-dir: .trivy-cache
+
   deploy-dev:
     if: github.ref == 'refs/heads/dev'
     needs: build-and-scan
