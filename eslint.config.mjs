@@ -17,7 +17,6 @@ export default [
       "no-unused-vars": ["error", { "argsIgnorePattern": "^next$" }],
     },
   },
-
   // Set up for recommended rules
   pluginJs.configs.recommended,
 ];
